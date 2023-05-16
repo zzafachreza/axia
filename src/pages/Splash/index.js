@@ -13,6 +13,13 @@ import { colors, fonts, windowHeight, windowWidth } from '../../utils';
 import { getData } from '../../utils/localStorage';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import Sound from 'react-native-sound';
+
+var Mysplash = new Sound(
+  require('../../assets/utama.mp3'),
+  Sound.MAIN_BUNDLE,
+).release();
+
 export default function Splash({ navigation }) {
 
 
@@ -45,6 +52,8 @@ export default function Splash({ navigation }) {
 
 
   useEffect(() => {
+
+    Mysplash.play();
 
     animasi(awanKanan, 0, 50);
     animasi(awanKiri, 50, 0);
@@ -98,13 +107,10 @@ export default function Splash({ navigation }) {
         flex: 1,
 
       }}>
-        <Animated.Text style={{
-          fontFamily: fonts.primary.normal,
-          fontSize: textLogo,
-          textShadowColor: '#FFF',
-          textShadowOffset: { width: 5, height: 5 },
-          textShadowRadius: 10,
-        }}>MULAI ?</Animated.Text>
+        <Animated.Image source={require('../../assets/mulai.png')} style={{
+          width: 200,
+          height: 80,
+        }} />
         <TouchableOpacity onPress={() => {
 
           navigation.replace('GetStarted')

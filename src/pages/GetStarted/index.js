@@ -50,6 +50,7 @@ export default function GetStarted({ navigation }) {
         }, 2000);
 
         setTimeout(() => {
+            Mysplash.stop();
             navigation.replace('Login');
         }, 4000)
 

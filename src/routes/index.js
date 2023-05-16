@@ -6,6 +6,13 @@ import {
   Home,
   Login,
   GetStarted,
+  Menang,
+  Gagal,
+  TidakGoalKanan,
+  TidakGoalKiri,
+  GoalKanan,
+  GoalKiri,
+  GagalTidakGoal,
 
 } from '../pages';
 import { colors } from '../utils';
@@ -15,7 +22,7 @@ const Stack = createStackNavigator();
 
 export default function Router() {
   return (
-    <Stack.Navigator initialRouteName='Splash'>
+    <Stack.Navigator initialRouteName='Gagal'>
       <Stack.Screen
         name="Splash"
         component={Splash}
@@ -43,6 +50,64 @@ export default function Router() {
       <Stack.Screen
         name="Home"
         component={Home}
+        options={{
+          headerShown: false,
+        }}
+      />
+
+      <Stack.Screen
+        name="Menang"
+        component={Menang}
+        options={{
+          headerShown: false,
+        }}
+      />
+
+
+      <Stack.Screen
+        name="Gagal"
+        component={Gagal}
+        options={{
+          headerShown: false,
+        }}
+      />
+
+      <Stack.Screen
+        name="TidakGoalKanan"
+        component={TidakGoalKanan}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="TidakGoalKiri"
+        component={TidakGoalKiri}
+        options={{
+          headerShown: false,
+        }}
+      />
+
+      <Stack.Screen
+        name="GoalKanan"
+        component={GoalKanan}
+        options={{
+          headerShown: false,
+        }}
+      />
+
+      <Stack.Screen
+        name="GoalKiri"
+        component={GoalKiri}
+        options={{
+          headerShown: false,
+        }}
+      />
+
+
+
+      <Stack.Screen
+        name="GagalTidakGoal"
+        component={GagalTidakGoal}
         options={{
           headerShown: false,
         }}
