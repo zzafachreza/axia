@@ -20,7 +20,9 @@ var Mysplash = new Sound(
   Sound.MAIN_BUNDLE,
 ).release();
 
+
 export default function Splash({ navigation }) {
+
 
 
 
@@ -50,10 +52,12 @@ export default function Splash({ navigation }) {
   };
 
 
-
   useEffect(() => {
 
-    Mysplash.play();
+    setTimeout(() => {
+      Mysplash.play();
+    }, 1000);
+
 
     animasi(awanKanan, 0, 50);
     animasi(awanKiri, 50, 0);
@@ -112,6 +116,7 @@ export default function Splash({ navigation }) {
           height: 80,
         }} />
         <TouchableOpacity onPress={() => {
+
 
           navigation.replace('GetStarted')
 

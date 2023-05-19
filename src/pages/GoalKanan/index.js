@@ -156,7 +156,9 @@ export default function GoalKanan({ navigation }) {
 
         tendangKanan();
 
-        whoosh.play();
+        setTimeout(() => {
+            whoosh.play();
+        }, 100)
 
         setTimeout(() => {
             navigation.goBack();

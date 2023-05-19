@@ -1,12 +1,22 @@
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect } from 'react'
+import Sound from 'react-native-sound';
 
 export default function GagalTidakGoal({ navigation }) {
+    const rebut = new Sound(
+        require('../../assets/rebut.mpeg'),
+        Sound.MAIN_BUNDLE,
+    ).release();
 
     useEffect(() => {
         setTimeout(() => {
+            // navigation.goBack();
+            rebut.play();
+        }, 100)
+        setTimeout(() => {
             navigation.goBack();
-        }, 1200)
+            // alert('oke')
+        }, 7200)
     }, [])
 
     return (

@@ -15,8 +15,66 @@ import { MyButton } from '../../components';
 import { colors, fonts, windowHeight, windowWidth } from '../../utils';
 import { getData } from '../../utils/localStorage';
 import { SketchCanvas } from '@terrylinla/react-native-sketch-canvas';
+import * as Progress from 'react-native-progress';
+import { useIsFocused } from '@react-navigation/native';
+import Sound from 'react-native-sound';
+
 
 export default function Home({ navigation }) {
+
+  const kemana = new Sound(
+    require('../../assets/kemana.mpeg'),
+    Sound.MAIN_BUNDLE,
+  ).release();
+
+  const AUDIO_K = new Sound(
+    require('../../assets/k.mpeg'),
+    Sound.MAIN_BUNDLE,
+  ).release();
+
+  const AUDIO_A = new Sound(
+    require('../../assets/a.mpeg'),
+    Sound.MAIN_BUNDLE,
+  ).release();
+  const AUDIO_N = new Sound(
+    require('../../assets/n.mpeg'),
+    Sound.MAIN_BUNDLE,
+  ).release();
+  const AUDIO_R = new Sound(
+    require('../../assets/r.mpeg'),
+    Sound.MAIN_BUNDLE,
+  ).release();
+  const AUDIO_I = new Sound(
+    require('../../assets/i.mpeg'),
+    Sound.MAIN_BUNDLE,
+  ).release().play();
+
+  const AUDIO_KIRI = new Sound(
+    require('../../assets/kiri.mpeg'),
+    Sound.MAIN_BUNDLE,
+  ).release();
+
+
+  const AUDIO_KANAN = new Sound(
+    require('../../assets/kanan.mpeg'),
+    Sound.MAIN_BUNDLE,
+  ).release();
+
+  const suaraHuruf = [
+    '../../assets/k.mpeg',
+    require('../../assets/a.mpeg'),
+    require('../../assets/n.mpeg'),
+    require('../../assets/a.mpeg'),
+    require('../../assets/n.mpeg')
+  ]
+
+  const PlaySuaraHuruf = (x) => {
+    new Sound(
+      require('../../assets/k.mpeg'),
+      Sound.MAIN_BUNDLE,
+    ).release().play()
+  }
+
 
   const canvasRef = useRef(null);
 
@@ -130,6 +188,25 @@ export default function Home({ navigation }) {
     }).start();
   }
 
+  const [open, setOpen] = useState(5000);
+  const waktuHabis = () => {
+
+    if (soal == 6 && (nilai + 1) == 6) {
+      setNilai(nilai + 1);
+      navigation.navigate('Menang');
+
+    } else if (soal == 6 && (nilai + 1) != 6) {
+      setNilai(nilai + 1);
+      navigation.navigate('Gagal');
+
+    } else {
+      if (nilai > 0) {
+        setNilai(nilai - 1);
+      }
+      navigation.navigate('TidakGoalKiri');
+      setSoal(soal + 1);
+    }
+  }
 
 
 
@@ -156,15 +233,19 @@ export default function Home({ navigation }) {
   const [modalVisible2, setModalVisible2] = useState(false);
 
   const bukaModal = () => {
-    setModalVisible(true)
+    setModalVisible(true);
+
   }
 
   const bukaModalKiri = () => {
-    setModalVisible2(true)
+    setModalVisible2(true);
+
   }
 
   const [jumlah, setJumlah] = useState(0);
   const [pilih, setPilih] = useState(0);
+
+  const huruf = ['K', 'A', 'N', 'A', 'N'];
 
   const gambar = [
     require('../../assets/k.png'),
@@ -183,14 +264,27 @@ export default function Home({ navigation }) {
   ]
 
 
-  const [soal, setSoal] = useState(1)
+  const [soal, setSoal] = useState(1);
+  const isFocus = useIsFocused();
 
   useEffect(() => {
 
+    if (isFocus) {
+      // setTimeout(() => {
+
+      // }, 1000);
+    }
 
 
 
-  }, []);
+
+    setTimeout(() => {
+      kemana.play();
+    }, 100);
+
+  }, [isFocus]);
+
+
 
   const bintang = [
     require('../../assets/b0.png'),
@@ -235,10 +329,22 @@ export default function Home({ navigation }) {
               height: 20,
             }} />
           </View>
-          <View><Text style={{
+          <View style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}>
+            {/* <Image source={require('../../assets/waktu.gif')} style={{
+              width: 20,
+              height: 20,
+            }} /> */}
+          </View>
+          <View style={{
+            flex: 1,
+          }}><Text style={{
             fontFamily: fonts.primary.normal,
             fontSize: 25,
-          }}>Tendangan Ke - {soal} {nilai}</Text></View>
+          }}>Tendangan Ke - {soal}</Text></View>
         </View>
 
         <Image source={require('../../assets/gawang.png')} style={{
@@ -316,6 +422,7 @@ export default function Home({ navigation }) {
         }}>
           <TouchableOpacity onPress={() => {
             bukaModalKiri();
+
           }}>
             <Image source={require('../../assets/panah_kiri.png')} style={{
               height: 100,
@@ -360,7 +467,7 @@ export default function Home({ navigation }) {
       </View>
 
 
-      {/* modal  K */}
+      {/* modal  Kanan */}
 
       <Modal
         animationType="fade"
@@ -368,6 +475,8 @@ export default function Home({ navigation }) {
         visible={modalVisible}
         onRequestClose={() => {
           // Alert.alert('Modal has been closed.');
+          setPilih(0);
+          setJumlah(0);
           setModalVisible(!modalVisible);
         }}>
         <View style={{
@@ -393,66 +502,84 @@ export default function Home({ navigation }) {
               onStrokeEnd={x => {
 
 
-                console.log(x);
+
                 if (jumlah == 2 || pilih == 2 || pilih == 4) {
 
-                  MyCanvas.current.clear();
+
+
                   setJumlah(0);
                   if (pilih == 4) {
+                    MyCanvas.current.clear();
                     setPilih(0)
                     setModalVisible(false);
                     // tendangKanan();
+                    AUDIO_N.play();
+                    setTimeout(() => {
+                      AUDIO_KANAN.play();
+
+                    }, 1000);
+
+                    setTimeout(() => {
+                      if (soal % 2 != 0) {
 
 
-                    if (soal % 2 != 0) {
 
+                        if (soal == 6 && (nilai + 1) == 6) {
+                          setNilai(nilai + 1);
+                          navigation.navigate('Menang');
 
+                        } else if (soal == 6 && (nilai + 1) != 6) {
+                          setNilai(nilai + 1);
+                          navigation.navigate('Gagal');
 
-                      if (soal == 6 && (nilai + 1) == 6) {
-                        setNilai(nilai + 1);
-                        navigation.navigate('Menang');
-
-                      } else if (soal == 6 && (nilai + 1) != 6) {
-                        setNilai(nilai + 1);
-                        navigation.navigate('Gagal');
-
-                      } else {
-                        if (nilai > 0) {
-                          setNilai(nilai - 1);
+                        } else {
+                          if (nilai > 0) {
+                            setNilai(nilai - 1);
+                          }
+                          navigation.navigate('TidakGoalKanan');
+                          setSoal(soal + 1)
                         }
-                        navigation.navigate('TidakGoalKanan');
-                        setSoal(soal + 1)
-                        MyCanvas.current.clear();
-                      }
 
-
-                    } else {
-
-
-                      if (soal == 6 && (nilai + 1) == 6) {
-                        setNilai(nilai + 1);
-                        navigation.navigate('Menang');
-
-                      } else if (soal == 6 && (nilai + 1) != 6) {
-                        setNilai(nilai + 1);
-                        navigation.navigate('Gagal');
 
                       } else {
-                        setNilai(nilai + 1);
 
-                        navigation.navigate('GoalKanan');
-                        setSoal(soal + 1)
-                        MyCanvas.current.clear();
+
+                        if (soal == 6 && (nilai + 1) == 6) {
+                          setNilai(nilai + 1);
+                          navigation.navigate('Menang');
+
+                        } else if (soal == 6 && (nilai + 1) != 6) {
+                          setNilai(nilai + 1);
+                          navigation.navigate('Gagal');
+
+                        } else {
+                          setNilai(nilai + 1);
+
+                          navigation.navigate('GoalKanan');
+                          setSoal(soal + 1)
+
+                        }
                       }
-                    }
 
+                    }, 2000)
 
                   } else {
+                    MyCanvas.current.clear();
+                    if (pilih == 0) {
+                      AUDIO_K.play();
+                    } else if (pilih == 1) {
+                      AUDIO_A.play();
+                    } else if (pilih == 2) {
+                      AUDIO_N.play();
+                    } else if (pilih == 3) {
+                      AUDIO_A.play();
+                    }
                     setPilih(pilih + 1)
                   }
 
 
                 } else {
+
 
                   setJumlah(jumlah + 1);
                 }
@@ -465,12 +592,14 @@ export default function Home({ navigation }) {
         </View>
       </Modal>
 
-
+      {/* kiri */}
       <Modal
         animationType="fade"
         transparent={true}
         visible={modalVisible2}
         onRequestClose={() => {
+          setPilih(0);
+          setJumlah(0);
           // Alert.alert('Modal has been closed.');
           setModalVisible2(!modalVisible2);
         }}>
@@ -496,62 +625,80 @@ export default function Home({ navigation }) {
 
               onStrokeEnd={x => {
 
-
+                // kiri
                 console.log(x);
                 if (jumlah == 2 || pilih == 1 || pilih == 3) {
+
+
 
                   MyCanvas.current.clear();
                   setJumlah(0);
                   if (pilih == 3) {
                     setPilih(0)
+                    AUDIO_I.play();
                     setModalVisible2(false);
-                    // tendangKanan();
+                    setTimeout(() => {
+                      AUDIO_KIRI.play();
+
+                    }, 1000);
 
 
 
-                    if (soal % 2 != 0) {
 
-                      if (soal == 6 && (nilai + 1) == 6) {
-                        setNilai(nilai + 1);
-                        navigation.navigate('Menang');
+                    setTimeout(() => {
 
-                      } else if (soal == 6 && (nilai + 1) != 6) {
-                        setNilai(nilai + 1);
-                        navigation.navigate('Gagal');
+                      if (soal % 2 != 0) {
 
-                      } else {
-                        setNilai(nilai + 1);
-                        navigation.navigate('GoalKiri');
-                        setSoal(soal + 1);
-                      }
+                        if (soal == 6 && (nilai + 1) == 6) {
+                          setNilai(nilai + 1);
+                          navigation.navigate('Menang');
 
+                        } else if (soal == 6 && (nilai + 1) != 6) {
+                          setNilai(nilai + 1);
+                          navigation.navigate('Gagal');
 
-                    } else {
-
-
-                      if (soal == 6 && (nilai + 1) == 6) {
-                        setNilai(nilai + 1);
-                        navigation.navigate('Menang');
-
-                      } else if (soal == 6 && (nilai + 1) != 6) {
-                        setNilai(nilai + 1);
-                        navigation.navigate('Gagal');
-
-                      } else {
-
-                        if (nilai > 0) {
-                          setNilai(nilai - 1);
+                        } else {
+                          setNilai(nilai + 1);
+                          navigation.navigate('GoalKiri');
+                          setSoal(soal + 1);
                         }
-                        navigation.navigate('TidakGoalKiri');
-                        setSoal(soal + 1)
-                        MyCanvas.current.clear();
+
+
+                      } else {
+
+
+                        if (soal == 6 && (nilai + 1) == 6) {
+                          setNilai(nilai + 1);
+                          navigation.navigate('Menang');
+
+                        } else if (soal == 6 && (nilai + 1) != 6) {
+                          setNilai(nilai + 1);
+                          navigation.navigate('Gagal');
+
+                        } else {
+
+                          if (nilai > 0) {
+                            setNilai(nilai - 1);
+                          }
+                          navigation.navigate('TidakGoalKiri');
+                          setSoal(soal + 1)
+
+                        }
                       }
-                    }
+                    }, 2000)
 
 
 
                     MyCanvas.current.clear();
                   } else {
+
+                    if (pilih == 0) {
+                      AUDIO_K.play();
+                    } else if (pilih == 1) {
+                      AUDIO_I.play();
+                    } else if (pilih == 2) {
+                      AUDIO_R.play();
+                    }
                     setPilih(pilih + 1)
                   }
 

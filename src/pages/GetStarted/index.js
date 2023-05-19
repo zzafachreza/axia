@@ -12,6 +12,12 @@ import { MyButton } from '../../components';
 import { colors, fonts, windowHeight, windowWidth } from '../../utils';
 import { getData } from '../../utils/localStorage';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import Sound from 'react-native-sound';
+
+var Mysplash = new Sound(
+    require('../../assets/otw.mpeg'),
+    Sound.MAIN_BUNDLE,
+).release();
 
 export default function GetStarted({ navigation }) {
 
@@ -46,13 +52,14 @@ export default function GetStarted({ navigation }) {
 
         setTimeout(() => {
             setBackgroundKU(require('../../assets/introtext2.png'));
+            Mysplash.play();
 
         }, 2000);
 
         setTimeout(() => {
-            Mysplash.stop();
+
             navigation.replace('Login');
-        }, 4000)
+        }, 6000)
 
 
     }, []);

@@ -2,37 +2,37 @@ import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect } from 'react'
 import Sound from 'react-native-sound';
 
+
 var whoosh = new Sound(
     require('../../assets/menang.mp3'),
     Sound.MAIN_BUNDLE,
 ).release();
 
+var whoosh2 = new Sound(
+    require('../../assets/finish.mpeg'),
+    Sound.MAIN_BUNDLE,
+).release();
 export default function Menang({ navigation }) {
 
+
+
     useEffect(() => {
-        whoosh.play();
+        setTimeout(() => {
+            // whoosh.play();
+            whoosh2.play();
+        }, 100)
         setTimeout(() => {
             navigation.replace('Splash')
-        }, 1500)
+        }, 5000)
     }, [])
 
     return (
-        <ImageBackground source={require('../../assets/intro1.jpg')} style={{
+        <ImageBackground source={require('../../assets/menang.jpg')} style={{
             flex: 1,
             padding: 10,
             alignItems: 'flex-start'
         }}>
-            <Image source={require('../../assets/b6.png')} style={{
-                width: 300,
-                height: 40,
-                resizeMode: 'contain'
-            }} />
-            <Image source={require('../../assets/textmenang.png')} style={{
-                margin: 10,
-                width: 300,
-                height: 70,
-                resizeMode: 'contain'
-            }} />
+
         </ImageBackground>
     )
 }

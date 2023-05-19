@@ -12,7 +12,12 @@ import { MyButton } from '../../components';
 import { colors, fonts, windowHeight, windowWidth } from '../../utils';
 import { getData } from '../../utils/localStorage';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import Sound from 'react-native-sound';
 
+var Mysplash = new Sound(
+  require('../../assets/ayo.mpeg'),
+  Sound.MAIN_BUNDLE,
+).release();
 export default function GetStarted({ navigation }) {
 
 
@@ -42,12 +47,14 @@ export default function GetStarted({ navigation }) {
 
 
   useEffect(() => {
-
+    setTimeout(() => {
+      Mysplash.play();
+    }, 100)
 
     setTimeout(() => {
       // setBackgroundKU(require('../../assets/introtext2.png'));
       navigation.replace('Home');
-    }, 2000)
+    }, 6000)
 
 
   }, []);
@@ -65,12 +72,12 @@ export default function GetStarted({ navigation }) {
         flex: 1,
         padding: 10,
       }}>
-
+      {/* 
       <Image source={backgroundKU} style={{
         width: windowWidth / 2,
         height: 60,
         resizeMode: 'contain'
-      }} />
+      }} /> */}
 
     </ImageBackground>
   );

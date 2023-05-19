@@ -6,13 +6,20 @@ var whoosh = new Sound(
     require('../../assets/kalah.mp3'),
     Sound.MAIN_BUNDLE,
 ).release();
+var whoosh2 = new Sound(
+    require('../../assets/kalahtotal.mpeg'),
+    Sound.MAIN_BUNDLE,
+).release();
 export default function Gagal({ navigation }) {
 
     useEffect(() => {
-        whoosh.play()
         setTimeout(() => {
-            navigation.replace('Splash')
-        }, 1500)
+            whoosh2.play();
+        }, 100)
+        setTimeout(() => {
+            alert('tests')
+            // navigation.replace('Splash')
+        }, 8000)
     }, [])
 
     return (

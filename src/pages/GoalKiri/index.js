@@ -151,7 +151,9 @@ export default function GoalKiri({ navigation }) {
 
         tendanganKiri();
 
-        whoosh.play();
+        setTimeout(() => {
+            whoosh.play();
+        }, 100)
 
         setTimeout(() => {
             navigation.goBack();
