@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   Image,
   Animated,
+  TouchableNativeFeedback,
   ImageBackground,
 } from 'react-native';
 import { MyButton } from '../../components';
@@ -14,72 +15,71 @@ import { getData } from '../../utils/localStorage';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Sound from 'react-native-sound';
 
-var Mysplash = new Sound(
-  require('../../assets/ayo.mpeg'),
-  Sound.MAIN_BUNDLE,
-).release();
 export default function GetStarted({ navigation }) {
 
 
-  const textLogo = new Animated.Value(0);
-
-
-  const animasi = (x, from, to, durasi) => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(x, {
-          toValue: from,
-          duration: durasi,
-          useNativeDriver: true
-        }),
-        Animated.timing(x, {
-          toValue: to,
-          duration: durasi,
-          useNativeDriver: true
-        }),
-      ]),
-      {
-        iterations: 1,
-      },
-    ).start();
-  };
 
 
 
-  useEffect(() => {
-    setTimeout(() => {
-      Mysplash.play();
-    }, 100)
+  const sound = new Sound('ayo.mp3', Sound.MAIN_BUNDLE, (error) => {
+    if (error) {
+      console.log('error', error);
+      return;
+    }
+    sound.play(success => {
+      if (success) {
+        sound.stop();
+        const sound2 = new Sound('kemana.mp3', Sound.MAIN_BUNDLE, (error) => {
+          if (error) {
+            console.log('error', error);
+            return;
+          }
+          navigation.replace('Home');
 
-    setTimeout(() => {
-      // setBackgroundKU(require('../../assets/introtext2.png'));
-      navigation.replace('Home');
-    }, 6000)
+          sound2.play(success => {
+            if (success) {
+              sound2.stop();
 
 
-  }, []);
+            } else {
+              console.log('playback failed due to audio decoding errors');
+            }
+          });
 
-  const [backgroundKU, setBackgroundKU] = useState(require('../../assets/introtext3.png'))
+        });
+
+
+
+      } else {
+        console.log('playback failed due to audio decoding errors');
+      }
+    });
+
+  });
 
 
   const myimg = useRef();
-
   return (
-    <ImageBackground
-      ref={myimg}
-      source={require('../../assets/intro2.jpg')}
-      style={{
-        flex: 1,
-        padding: 10,
-      }}>
-      {/* 
+    <TouchableNativeFeedback onPress={() => {
+      navigation.replace('Home')
+      sound.stop();
+    }}>
+      <ImageBackground
+        ref={myimg}
+        source={require('../../assets/intro2.jpg')}
+        style={{
+          flex: 1,
+          padding: 10,
+        }}>
+        {/* 
       <Image source={backgroundKU} style={{
         width: windowWidth / 2,
         height: 60,
         resizeMode: 'contain'
       }} /> */}
 
-    </ImageBackground>
+      </ImageBackground>
+    </TouchableNativeFeedback>
   );
 }
 

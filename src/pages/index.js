@@ -9,6 +9,9 @@ import Menang from './Menang';
 import TidakGoalKiri from './TidakGoalKiri';
 import GoalKiri from './GoalKiri';
 import GagalTidakGoal from './GagalTidakGoal';
+import Home2 from './Home2';
+import Home3 from './Home3';
+import GetStarted2 from './GetStarted2';
 
 
 
@@ -32,6 +35,7 @@ import GagalTidakGoal from './GagalTidakGoal';
 export {
   Splash,
   Home,
+  Home2,
   Login,
   GetStarted,
   GoalKiri,
@@ -40,6 +44,8 @@ export {
   TidakGoalKanan,
   TidakGoalKiri,
   Menang,
-  GagalTidakGoal
+  GagalTidakGoal,
+  Home3,
+  GetStarted2
 
 };

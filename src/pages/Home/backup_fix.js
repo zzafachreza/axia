@@ -1,226 +1,720 @@
-import { Alert, StyleSheet, Text, View, Image, FlatList, ActivityIndicator } from 'react-native'
-import React, { useState, useEffect } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { apiURL, getData, storeData } from '../../utils/localStorage';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+    StyleSheet,
+    Text,
+    View,
+    ActivityIndicator,
+    Image,
+    Animated,
+    ImageBackground,
+    TouchableNativeFeedback,
+    TouchableOpacity, Modal
+
+} from 'react-native';
+import { MyButton } from '../../components';
 import { colors, fonts, windowHeight, windowWidth } from '../../utils';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { showMessage } from 'react-native-flash-message';
-import Sound from 'react-native-sound';
-import { Icon } from 'react-native-elements/dist/icons/Icon';
-import { MyButton, MyInput } from '../../components';
+import { getData } from '../../utils/localStorage';
+import { SketchCanvas } from '@terrylinla/react-native-sketch-canvas';
+import * as Progress from 'react-native-progress';
 import { useIsFocused } from '@react-navigation/native';
-import axios from 'axios';
-import { FloatingAction } from "react-native-floating-action";
-import 'intl';
-import 'intl/locale-data/jsonp/en';
+import Sound from 'react-native-sound';
+import { Icon } from 'react-native-elements';
+
 
 export default function Home({ navigation }) {
 
-    const [user, setUser] = useState({});
-    const [data, setData] = useState({});
-    const [loading, setLoading] = useState(false);
-    const [open, setOpen] = useState(false);
-    const isFocused = useIsFocused();
-    useEffect(() => {
-        if (isFocused) {
-            __getTransaction();
-        }
+    const kemana = new Sound('kemana.mp3',
+        Sound.MAIN_BUNDLE,
+    ).release();
 
-    }, [isFocused]);
+    const AUDIO_K = new Sound('k.mp3',
+        Sound.MAIN_BUNDLE,
+    ).release();
 
-    const __getTransaction = () => {
-        getData('user').then(res => {
-            setUser(res);
-        })
+    const AUDIO_A = new Sound('a.mp3',
+        Sound.MAIN_BUNDLE,
+    ).release();
+    const AUDIO_N = new Sound('n.mp3',
+        Sound.MAIN_BUNDLE,
+    ).release();
+    const AUDIO_R = new Sound('r.mp3',
+        Sound.MAIN_BUNDLE,
+    ).release();
+    const AUDIO_I = new Sound('i.mp3',
+        Sound.MAIN_BUNDLE,
+    ).release().play();
+
+    const AUDIO_KIRI = new Sound('kiri.mp3',
+        Sound.MAIN_BUNDLE,
+    ).release();
+
+
+    const AUDIO_KANAN = new Sound('kanan.mp3',
+        Sound.MAIN_BUNDLE,
+    ).release();
+
+    const suaraHuruf = [
+        'k.mp3',
+        'a.mp3',
+        'n.mp3',
+        'a.mp3',
+        'n.mp3'
+    ]
+
+
+
+
+    const canvasRef = useRef(null);
+
+    const handleUndo = () => {
+        canvasRef.current?.undo();
+    };
+
+    const handleClear = () => {
+        canvasRef.current?.clear();
+    };
+
+
+    const textLogo = new Animated.Value(0);
+
+    const bola = new Animated.Value(100);
+    const kanan = new Animated.Value(0);
+    const atas = new Animated.Value(0);
+    const kiper_loncat1 = new Animated.Value(0);
+    const kiper_loncat2 = new Animated.Value(0);
+    const kiper_loncat3 = new Animated.Value(0);
+    const kiper_loncat4 = new Animated.Value(1);
+    const kiper_loncat5 = new Animated.Value(0);
+
+    const MyCanvas = useRef();
+
+    const animasi = (x, from, to, durasi) => {
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(x, {
+                    toValue: from,
+                    duration: durasi,
+                    useNativeDriver: true
+                }),
+                Animated.timing(x, {
+                    toValue: to,
+                    duration: durasi,
+                    useNativeDriver: true
+                }),
+            ]),
+            {
+                iterations: 1,
+            },
+        ).start();
+    };
+
+
+    const kiper_loncat = (x = 0, y = 0, z = 0, k = 1, j = 0) => {
+        Animated.timing(kiper_loncat1, {
+            toValue: x,
+            duration: 800,
+            useNativeDriver: true
+        }).start();
+        Animated.timing(kiper_loncat2, {
+            toValue: y,
+            duration: 1500,
+            useNativeDriver: true
+        }).start();
+        Animated.timing(kiper_loncat3, {
+            toValue: z,
+            duration: 1200,
+            useNativeDriver: true
+        }).start();
+        Animated.timing(kiper_loncat4, {
+            toValue: k,
+            duration: 1,
+            useNativeDriver: true
+        }).start();
+        Animated.timing(kiper_loncat5, {
+            toValue: j,
+            duration: 1,
+            useNativeDriver: true
+        }).start();
     }
 
-    const MyListData = ({ lab, val }) => {
-        return (
-            <View style={{
-                flexDirection: 'row',
-                marginHorizontal: 10,
-                borderBottomWidth: 1,
-                paddingVertical: 6,
-                borderBottomColor: colors.zavalabs,
-            }}>
-                <View style={{ flex: 0.7, }}>
-                    <Text style={{
-                        fontFamily: fonts.secondary[400],
-                        fontSize: windowWidth / 28,
-                        color: colors.black
-                    }}>{lab}</Text>
-                </View>
-                <View style={{ flex: 0.2, }}>
-                    <Text style={{
-                        fontFamily: fonts.secondary[400],
-                        fontSize: windowWidth / 28,
-                        color: colors.black
-                    }}>:</Text>
-                </View>
-                <View style={{ flex: 1 }}>
-                    <Text style={{
-                        fontFamily: fonts.secondary[600],
-                        fontSize: windowWidth / 28,
-                        color: colors.black
-                    }}>{val}</Text>
-                </View>
-            </View>
-        )
+
+    const tendangKanan = () => {
+        kiper_loncat(0, -20, 0, 0, 1)
+
+        Animated.timing(bola, {
+            toValue: 50,
+            duration: 1200,
+            useNativeDriver: false
+        }).start();
+        Animated.timing(kanan, {
+            toValue: 180,
+            duration: 1300,
+            useNativeDriver: false
+        }).start();
+        Animated.timing(atas, {
+            toValue: -200,
+            duration: 800,
+            useNativeDriver: false
+        }).start();
     }
 
-    const [key, setKey] = useState('');
+    const tendanganKiri = () => {
 
-    const [formula, setFormula] = useState({
-        a8: 0,
-        a9: 0,
-        a10: 0,
-        a11: 0,
-        a12: 0,
-        a13: 0,
-        a14: 0,
-        a15: 0,
-        a16: 0
-    })
+        kiper_loncat(-230, 20, 1, 0, 1)
 
-    const filterData = () => {
-        setLoading(true);
-        axios.post(apiURL + 'part.php', {
-            part_number: key
-        }).then(res => {
-            setLoading(false);
-            console.log(res.data);
-            if (res.data.kode == 50) {
-                setOpen(false);
-                showMessage({
-                    message: 'Part Number tidak ditemukan !',
-                    type: 'danger',
-                })
-            } else {
-                setOpen(true);
-                console.log(res.data);
-                setData(res.data);
+        Animated.timing(bola, {
+            toValue: 50,
+            duration: 1500,
+        }).start();
+        Animated.timing(kanan, {
+            toValue: -200,
+            duration: 800,
+        }).start();
+        Animated.timing(atas, {
+            toValue: -200,
+            duration: 800,
+        }).start();
+    }
 
+    const [open, setOpen] = useState(5000);
+    const waktuHabis = () => {
 
-                setFormula({
-                    ...formula,
-                    a8: res.data.price - (res.data.price * (res.data.discount / 100)),
-                    a9: (res.data.price - (res.data.price * (res.data.discount / 100))) * 15000,
-                })
+        if (soal == 6 && (nilai + 1) == 6) {
+            setNilai(nilai + 1);
+            navigation.navigate('Menang');
+
+        } else if (soal == 6 && (nilai + 1) != 6) {
+            setNilai(nilai + 1);
+            navigation.navigate('Gagal');
+
+        } else {
+            if (nilai > 0) {
+                setNilai(nilai - 1);
             }
-        })
+            navigation.navigate('TidakGoalKiri');
+            setSoal(soal + 1);
+        }
     }
+
+
+
+    const tendanganMulai = () => {
+
+        kiper_loncat(0, 0, 0, 1, 0)
+
+
+        Animated.timing(bola, {
+            toValue: 100,
+            duration: 1000,
+        }).start();
+        Animated.timing(kanan, {
+            toValue: 0,
+            duration: 1300,
+        }).start();
+        Animated.timing(atas, {
+            toValue: 0,
+            duration: 800,
+        }).start();
+    }
+
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisible2, setModalVisible2] = useState(false);
+
+    const bukaModal = () => {
+        setModalVisible(true);
+
+    }
+
+    const bukaModalKiri = () => {
+        setModalVisible2(true);
+
+    }
+
+    const [jumlah, setJumlah] = useState(0);
+    const [pilih, setPilih] = useState(0);
+
+    const huruf = ['K', 'A', 'N', 'A', 'N'];
+
+    const gambar = [
+        require('../../assets/k.png'),
+        require('../../assets/a.png'),
+        require('../../assets/n.png'),
+        require('../../assets/a.png'),
+        require('../../assets/n.png'),
+
+    ]
+
+    const gambar2 = [
+        require('../../assets/k.png'),
+        require('../../assets/i.png'),
+        require('../../assets/r.png'),
+        require('../../assets/i.png'),
+    ]
+
+
+    const [soal, setSoal] = useState(1);
+    const isFocus = useIsFocused();
+
+
+
+
+
+    const bintang = [
+        require('../../assets/b0.png'),
+        require('../../assets/b1.png'),
+        require('../../assets/b2.png'),
+        require('../../assets/b3.png'),
+        require('../../assets/b4.png'),
+        require('../../assets/b5.png'),
+        require('../../assets/b6.png')
+    ]
+
+    const [nilai, setNilai] = useState(0);
+
+
+
+    const myimg = useRef();
 
     return (
-        <SafeAreaView style={{
-            flex: 1,
-            backgroundColor: colors.white,
-        }}>
-            {/* header */}
+        <ImageBackground
+
+            source={require('../../assets/bghome.png')}
+            style={{
+                flex: 1,
+                padding: 10,
+            }}>
+
             <View style={{
-                backgroundColor: colors.primary,
-                paddingHorizontal: 10,
-                paddingVertical: 10,
+                flex: 1,
+                // backgroundColor: 'red',
+                position: 'relative'
+
             }}>
 
                 <View style={{
-                    flexDirection: 'row',
+                    flexDirection: 'row'
                 }}>
                     <View style={{
                         flex: 1,
                     }}>
-                        <Text style={{
-                            fontFamily: fonts.secondary[400],
-                            fontSize: windowWidth / 28,
-                            color: colors.white
-                        }}>Selamat datang, {user.nama_lengkap}</Text>
-                        <Text style={{
-                            fontFamily: fonts.secondary[600],
-                            fontSize: windowWidth / 28,
-                            color: colors.white
-                        }}>PT Wali Karunia Sejahtera</Text>
+                        <Image source={bintang[nilai]} style={{
+                            width: 150,
+                            height: 20,
+                        }} />
                     </View>
-
-                    <TouchableOpacity onPress={() => navigation.navigate('GetStarted')} style={{
+                    <View style={{
+                        flex: 1,
                         justifyContent: 'center',
-                        alignItems: 'center',
-                        borderRadius: 30
+                        alignItems: 'center'
                     }}>
-                        <Icon type='ionicon' name='person' color={colors.white} />
-                        {/* <Text style={{
-              fontFamily: fonts.secondary[400],
-              fontSize: windowWidth / 28,
-              color: colors.white
-            }}>Informasi Akun</Text> */}
-                    </TouchableOpacity>
+                        {/* <Image source={require('../../assets/waktu.gif')} style={{
+              width: 20,
+              height: 20,
+            }} /> */}
+                    </View>
+                    <View style={{
+                        flex: 1,
+                        flexDirection: 'row'
+                    }}><Text style={{
+                        flex: 1,
+                        fontFamily: fonts.primary.normal,
+                        fontSize: 25,
 
+                    }}>Tendangan Ke - {soal}</Text>
+                        <TouchableOpacity onPress={() => navigation.replace('Splash')} style={{
+                            paddingHorizontal: 10,
+                            zIndex: 100
+                        }}>
+                            <Icon type='ionicon' name='home' size={20} />
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
 
+                <Image source={require('../../assets/gawang.png')} style={{
+                    width: windowWidth,
+                    height: windowHeight / 1.5,
+                }} />
+
+                {/* <Image source={require('../../assets/kiper_kanan.png')} style={{
+          width: windowWidth / 1.5,
+          height: windowHeight / 1.3,
+          left: windowWidth / 10,
+          resizeMode: "contain",
+          position: 'absolute'
+        }} /> */}
+
+
+
+
+                <Animated.Image source={require('../../assets/kiper.png')} style={{
+                    opacity: kiper_loncat4,
+                    width: windowWidth / 1.5,
+                    height: windowHeight / 1.3,
+                    left: soal % 2 != 0 ? windowWidth / 2.6 : 0,
+                    right: soal % 2 == 0 ? windowWidth / 2.6 : 0,
+                    resizeMode: "contain",
+                    position: 'absolute',
+                    transform: [
+                        { translateX: kiper_loncat1 },
+                        { translateY: kiper_loncat2 },
+                        {
+                            rotateZ: kiper_loncat3.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: ["0deg", "-80deg"]
+                            })
+                        }
+                    ]
+                }} />
+
+                <Animated.Image source={require('../../assets/kiper_tangkap.png')} style={{
+                    opacity: kiper_loncat5,
+                    width: windowWidth / 1.5,
+                    height: windowHeight / 1.3,
+                    left: soal % 2 != 0 ? windowWidth / 2.6 : 0,
+                    right: soal % 2 == 0 ? windowWidth / 2.6 : 0,
+                    resizeMode: "contain",
+                    position: 'absolute',
+                    transform: [
+                        { translateX: kiper_loncat1 },
+                        { translateY: kiper_loncat2 },
+                        {
+                            rotateZ: kiper_loncat3.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: ["0deg", "-80deg"]
+                            })
+                        }
+                    ]
+                }} />
+
+
+                {/* <Image source={require('../../assets/kiper_kiri.png')} style={{
+          width: windowWidth / 1.5,
+          height: windowHeight / 1.3,
+          right: windowWidth / 10,
+          resizeMode: "contain",
+          position: 'absolute'
+        }} /> */}
             </View>
-            {/* body */}
+
             <View style={{
-                padding: 10,
                 flexDirection: 'row'
             }}>
-
                 <View style={{
                     flex: 1,
+                    padding: 10,
+
                 }}>
-                    <MyInput value={key} onChangeText={x => setKey(x)} autoFocus label="Enter Part Number" placeholder="please enter part number" iconname="file-tray-stacked-outline" />
-                </View>
-                <View style={{
-                    paddingVertical: 25,
-                    paddingLeft: 5,
-                }}>
-                    <TouchableOpacity onPress={filterData} style={{
-                        width: 60,
-                        borderRadius: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        height: 50,
-                        backgroundColor: colors.primary,
+                    <TouchableOpacity onPress={() => {
+                        bukaModalKiri();
+
                     }}>
-                        <Icon type='ionicon' name='search' color={colors.white} />
+                        <Image source={require('../../assets/panah_kiri.png')} style={{
+                            height: 100,
+                            width: '100%',
+                            resizeMode: 'contain',
+                        }} />
                     </TouchableOpacity>
                 </View>
+                <View style={{
+                    flex: 1,
+                    padding: 0,
+                }}>
+                    <TouchableNativeFeedback onPress={() => navigation.navigate('TidakGoalKanan')}>
+                        <Animated.Image source={require('../../assets/bola.gif')} style={{
+                            height: bola,
+                            zIndex: 100,
+                            width: '100%',
+                            resizeMode: 'contain',
+                            position: 'absolute',
+                            transform: [
+                                { translateX: kanan },
+                                { translateY: atas },
+                            ]
+                        }} />
+                    </TouchableNativeFeedback>
+                </View>
+                <View style={{
+                    flex: 1,
+                    padding: 10,
 
+                }}>
+                    <TouchableOpacity onPress={() => {
+                        // tendangKanan();
+                        bukaModal();
+                    }}>
+                        <Image source={require('../../assets/panah_kanan.png')} style={{
+                            height: 100,
+                            width: '100%',
+                            resizeMode: 'contain',
+                        }} />
+                    </TouchableOpacity>
+                </View>
             </View>
 
-            {loading && <ActivityIndicator size="large" color={colors.primary} />}
-            {open && <>
 
-                <MyListData lab="Part No" val={data.part_number} />
-                <MyListData lab="Description" val={data.part_description} />
-                <MyListData lab="Division" val={data.division} />
-                <MyListData lab="List Price" val={data.price} />
-                <MyListData lab="Discount" val={`${data.discount}%`} />
-                <MyListData lab="Price After Discount" val={`$${formula.a8}`} />
-                <MyListData lab="Harga" val={`Rp${new Intl.NumberFormat().format(formula.a8 * 15000)}`} />
-                <MyListData lab="Harga + BM 10%" val={`Rp${new Intl.NumberFormat().format((formula.a8 * 15000) + ((formula.a8 * 15000) * 10 / 100))}`} />
-                <MyListData lab="Pph 2,5%" val={`Rp${new Intl.NumberFormat().format(((formula.a8 * 15000) + ((formula.a8 * 15000) * 10 / 100)) * 2.5 / 100)}`} />
-                <MyListData lab="Ppn 11%" val={`Rp${new Intl.NumberFormat().format(((formula.a8 * 15000) + ((formula.a8 * 15000) * 10 / 100)) * 11 / 100)}`} />
+            {/* modal  Kanan */}
 
-                <MyListData lab="Ongkir 15%" val={`Rp${new Intl.NumberFormat().format((formula.a8 * 15000) * 15 / 100)}`} />
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    // Alert.alert('Modal has been closed.');
+                    setPilih(0);
+                    setJumlah(0);
+                    setModalVisible(!modalVisible);
+                }}>
+                <View style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                    // backgroundColor: 'red'
+                }}>
+                    <Image source={require('../../assets/kanan.png')} style={{
+                        width: windowHeight / 1.8,
+                        height: 70,
+                        resizeMode: 'contain'
+                    }} />
+                    <ImageBackground source={gambar[pilih]} style={{
+                        width: windowHeight / 1.8,
+                        height: windowHeight / 1.8,
+                    }}>
 
-                <MyListData lab="Harga Modal" val={`Rp${new Intl.NumberFormat().format(((formula.a8 * 15000) + ((formula.a8 * 15000) * 10 / 100)) + (((formula.a8 * 15000) + ((formula.a8 * 15000) * 10 / 100)) * 2.5 / 100) + ((formula.a8 * 15000) * 15 / 100))}`} />
-                <MyListData lab="Harga Jual" val={`Rp${new Intl.NumberFormat().format((((formula.a8 * 15000) + ((formula.a8 * 15000) * 10 / 100)) + (((formula.a8 * 15000) + ((formula.a8 * 15000) * 10 / 100)) * 2.5 / 100) + ((formula.a8 * 15000) * 15 / 100)) + (((formula.a8 * 15000) + (((formula.a8 * 15000) * 10 / 100)) + (((formula.a8 * 15000) + ((formula.a8 * 15000) * 10 / 100)) * 2.5 / 100) + ((formula.a8 * 15000) * 15 / 100)) * 50 / 100))}`} />
+                        <SketchCanvas
 
-                <MyListData lab="Harga Nett" val={`Rp${new Intl.NumberFormat().format((((formula.a8 * 15000) + ((formula.a8 * 15000) * 10 / 100)) + (((formula.a8 * 15000) + ((formula.a8 * 15000) * 10 / 100)) * 2.5 / 100) + ((formula.a8 * 15000) * 15 / 100)) + (((formula.a8 * 15000) + (((formula.a8 * 15000) * 10 / 100)) + (((formula.a8 * 15000) + ((formula.a8 * 15000) * 10 / 100)) * 2.5 / 100) + ((formula.a8 * 15000) * 15 / 100)) * 30 / 100))}`} />
+                            ref={MyCanvas}
 
-                <MyListData lab="Stock" val={0} />
-            </>}
+                            onStrokeEnd={x => {
 
-        </SafeAreaView >
-    )
+
+
+                                if (jumlah == 2 || pilih == 2 || pilih == 4) {
+
+
+
+                                    setJumlah(0);
+                                    if (pilih == 4) {
+                                        MyCanvas.current.clear();
+                                        setPilih(0)
+                                        setModalVisible(false);
+                                        // tendangKanan();
+                                        AUDIO_N.play();
+                                        setTimeout(() => {
+                                            AUDIO_KANAN.play();
+
+                                        }, 1000);
+
+                                        setTimeout(() => {
+                                            if (soal % 2 != 0) {
+
+
+
+                                                if (soal == 6 && (nilai + 1) == 6) {
+                                                    setNilai(nilai + 1);
+                                                    navigation.navigate('Menang');
+
+                                                } else if (soal == 6 && (nilai + 1) != 6) {
+                                                    setNilai(nilai + 1);
+                                                    navigation.navigate('Gagal');
+
+                                                } else {
+                                                    if (nilai > 0) {
+                                                        setNilai(nilai - 1);
+                                                    }
+                                                    navigation.navigate('TidakGoalKanan');
+                                                    setSoal(soal + 1)
+                                                }
+
+
+                                            } else {
+
+
+                                                if (soal == 6 && (nilai + 1) == 6) {
+                                                    setNilai(nilai + 1);
+                                                    navigation.navigate('Menang');
+
+                                                } else if (soal == 6 && (nilai + 1) != 6) {
+                                                    setNilai(nilai + 1);
+                                                    navigation.navigate('Gagal');
+
+                                                } else {
+                                                    setNilai(nilai + 1);
+
+                                                    navigation.navigate('GoalKanan');
+                                                    setSoal(soal + 1)
+
+                                                }
+                                            }
+
+                                        }, 2000)
+
+                                    } else {
+                                        MyCanvas.current.clear();
+                                        if (pilih == 0) {
+                                            const HK = new Sound('k.mp3', Sound.MAIN_BUNDLE, (error) => {
+                                                if (error) {
+                                                    console.log('error', error);
+                                                    return;
+                                                }
+                                                HK.play();
+                                            });
+                                        } else if (pilih == 1) {
+                                            AUDIO_A.play();
+                                        } else if (pilih == 2) {
+                                            AUDIO_N.play();
+                                        } else if (pilih == 3) {
+                                            AUDIO_A.play();
+                                        }
+                                        setPilih(pilih + 1)
+                                    }
+
+
+                                } else {
+
+
+                                    setJumlah(jumlah + 1);
+                                }
+                            }}
+                            style={{ flex: 1 }}
+                            strokeColor={'#012646'}
+                            strokeWidth={20}
+                        />
+                    </ImageBackground>
+                </View>
+            </Modal>
+
+            {/* kiri */}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible2}
+                onRequestClose={() => {
+                    setPilih(0);
+                    setJumlah(0);
+                    // Alert.alert('Modal has been closed.');
+                    setModalVisible2(!modalVisible2);
+                }}>
+                <View style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                    // backgroundColor: 'red'
+                }}>
+                    <Image source={require('../../assets/kiri.png')} style={{
+                        width: windowHeight / 1.8,
+                        height: 70,
+                        resizeMode: 'contain'
+                    }} />
+                    <ImageBackground source={gambar2[pilih]} style={{
+                        width: windowHeight / 1.8,
+                        height: windowHeight / 1.8,
+                    }}>
+
+                        <SketchCanvas
+
+                            ref={MyCanvas}
+
+                            onStrokeEnd={x => {
+
+
+                                if (jumlah == 2 || pilih == 1 || pilih == 3) {
+
+
+
+                                    MyCanvas.current.clear();
+                                    setJumlah(0);
+                                    if (pilih == 3) {
+                                        setPilih(0)
+                                        AUDIO_I.play();
+                                        setModalVisible2(false);
+                                        setTimeout(() => {
+                                            AUDIO_KIRI.play();
+
+                                        }, 1000);
+
+
+
+
+                                        setTimeout(() => {
+
+                                            if (soal % 2 != 0) {
+
+                                                if (soal == 6 && (nilai + 1) == 6) {
+                                                    setNilai(nilai + 1);
+                                                    navigation.navigate('Menang');
+
+                                                } else if (soal == 6 && (nilai + 1) != 6) {
+                                                    setNilai(nilai + 1);
+                                                    navigation.navigate('Gagal');
+
+                                                } else {
+                                                    setNilai(nilai + 1);
+                                                    navigation.navigate('GoalKiri');
+                                                    setSoal(soal + 1);
+                                                }
+
+
+                                            } else {
+
+
+                                                if (soal == 6 && (nilai + 1) == 6) {
+                                                    setNilai(nilai + 1);
+                                                    navigation.navigate('Menang');
+
+                                                } else if (soal == 6 && (nilai + 1) != 6) {
+                                                    setNilai(nilai + 1);
+                                                    navigation.navigate('Gagal');
+
+                                                } else {
+
+                                                    if (nilai > 0) {
+                                                        setNilai(nilai - 1);
+                                                    }
+                                                    navigation.navigate('TidakGoalKiri');
+                                                    setSoal(soal + 1)
+
+                                                }
+                                            }
+                                        }, 2000)
+
+
+
+                                        MyCanvas.current.clear();
+                                    } else {
+
+                                        if (pilih == 0) {
+                                            const HK = new Sound('k.mp3', Sound.MAIN_BUNDLE, (error) => {
+                                                if (error) {
+                                                    console.log('error', error);
+                                                    return;
+                                                }
+                                                HK.play();
+                                            });
+                                        } else if (pilih == 1) {
+                                            AUDIO_I.play();
+                                        } else if (pilih == 2) {
+                                            AUDIO_R.play();
+                                        }
+                                        setPilih(pilih + 1)
+                                    }
+
+
+                                } else {
+
+                                    setJumlah(jumlah + 1);
+                                }
+                            }}
+                            style={{ flex: 1 }}
+                            strokeColor={'#012646'}
+                            strokeWidth={20}
+                        />
+                    </ImageBackground>
+                </View>
+            </Modal>
+
+        </ImageBackground >
+    );
 }
 
-const styles = StyleSheet.create({
-    judul: {
-        fontFamily: fonts.secondary[600],
-        fontSize: windowWidth / 35
-    },
-    item: {
-        fontFamily: fonts.secondary[400],
-        fontSize: windowWidth / 35
-    }
-})
+const styles = StyleSheet.create({});

@@ -18,13 +18,9 @@ import { SketchCanvas } from '@terrylinla/react-native-sketch-canvas';
 
 import Sound from 'react-native-sound';
 
-var whoosh = new Sound(
-    require('../../assets/tidakgoal.mp3'),
-    Sound.MAIN_BUNDLE,
-).release();
+import SoundPlayer from 'react-native-sound-player'
 
-
-export default function TidakGoalKanan({ navigation }) {
+export default function TidakGoalKanan({ navigation, route }) {
 
 
 
@@ -150,14 +146,37 @@ export default function TidakGoalKanan({ navigation }) {
     const [pilih, setPilih] = useState(0);
 
 
-
+    tendangKanan();
     useEffect(() => {
 
-        tendangKanan();
-        whoosh.play();
+
+        // const tidakgoal = new Sound('tidakgoal.mp3', Sound.MAIN_BUNDLE, (error) => {
+        //     if (error) {
+        //         console.log('error', error);
+        //         return;
+        //     }
+        //     tidakgoal.play(success => {
+        //         navigation.replace('GagalTidakGoal');
+        //         console.log('tidak gial', success)
+
+        //     });
+        // });
+
         setTimeout(() => {
-            navigation.replace('GagalTidakGoal')
-        }, 1200)
+            SoundPlayer.playSoundFile('tidakgoal', 'mp3');
+        }, 200)
+
+        setTimeout(() => {
+            if (route.params.status == 'Menang') {
+                navigation.replace('Menang')
+            } else if (route.params.status == 'Gagal') {
+                navigation.replace('Gagal')
+            } else {
+                navigation.replace('GagalTidakGoal');
+            }
+
+        }, 2500)
+
 
 
 

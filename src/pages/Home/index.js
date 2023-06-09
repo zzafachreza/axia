@@ -18,62 +18,25 @@ import { SketchCanvas } from '@terrylinla/react-native-sketch-canvas';
 import * as Progress from 'react-native-progress';
 import { useIsFocused } from '@react-navigation/native';
 import Sound from 'react-native-sound';
+import { Icon } from 'react-native-elements';
+import SoundPlayer from 'react-native-sound-player'
 
 
 export default function Home({ navigation }) {
 
-  const kemana = new Sound(
-    require('../../assets/kemana.mpeg'),
-    Sound.MAIN_BUNDLE,
-  ).release();
-
-  const AUDIO_K = new Sound(
-    require('../../assets/k.mpeg'),
-    Sound.MAIN_BUNDLE,
-  ).release();
-
-  const AUDIO_A = new Sound(
-    require('../../assets/a.mpeg'),
-    Sound.MAIN_BUNDLE,
-  ).release();
-  const AUDIO_N = new Sound(
-    require('../../assets/n.mpeg'),
-    Sound.MAIN_BUNDLE,
-  ).release();
-  const AUDIO_R = new Sound(
-    require('../../assets/r.mpeg'),
-    Sound.MAIN_BUNDLE,
-  ).release();
-  const AUDIO_I = new Sound(
-    require('../../assets/i.mpeg'),
-    Sound.MAIN_BUNDLE,
-  ).release().play();
-
-  const AUDIO_KIRI = new Sound(
-    require('../../assets/kiri.mpeg'),
-    Sound.MAIN_BUNDLE,
-  ).release();
 
 
-  const AUDIO_KANAN = new Sound(
-    require('../../assets/kanan.mpeg'),
-    Sound.MAIN_BUNDLE,
-  ).release();
+
 
   const suaraHuruf = [
-    '../../assets/k.mpeg',
-    require('../../assets/a.mpeg'),
-    require('../../assets/n.mpeg'),
-    require('../../assets/a.mpeg'),
-    require('../../assets/n.mpeg')
+    'k.mp3',
+    'a.mp3',
+    'n.mp3',
+    'a.mp3',
+    'n.mp3'
   ]
 
-  const PlaySuaraHuruf = (x) => {
-    new Sound(
-      require('../../assets/k.mpeg'),
-      Sound.MAIN_BUNDLE,
-    ).release().play()
-  }
+
 
 
   const canvasRef = useRef(null);
@@ -256,6 +219,25 @@ export default function Home({ navigation }) {
 
   ]
 
+  const GambarKanan = [
+    require('../../assets/r0.png'),
+    require('../../assets/r1.png'),
+    require('../../assets/r2.png'),
+    require('../../assets/r3.png'),
+    require('../../assets/r4.png'),
+    require('../../assets/r5.png'),
+
+  ]
+
+  const GambarKiri = [
+    require('../../assets/l0.png'),
+    require('../../assets/l1.png'),
+    require('../../assets/l2.png'),
+    require('../../assets/l3.png'),
+    require('../../assets/l4.png'),
+
+  ]
+
   const gambar2 = [
     require('../../assets/k.png'),
     require('../../assets/i.png'),
@@ -267,22 +249,8 @@ export default function Home({ navigation }) {
   const [soal, setSoal] = useState(1);
   const isFocus = useIsFocused();
 
-  useEffect(() => {
-
-    if (isFocus) {
-      // setTimeout(() => {
-
-      // }, 1000);
-    }
 
 
-
-
-    setTimeout(() => {
-      kemana.play();
-    }, 100);
-
-  }, [isFocus]);
 
 
 
@@ -341,16 +309,36 @@ export default function Home({ navigation }) {
           </View>
           <View style={{
             flex: 1,
+            flexDirection: 'row'
           }}><Text style={{
+            flex: 1,
             fontFamily: fonts.primary.normal,
             fontSize: 25,
-          }}>Tendangan Ke - {soal}</Text></View>
+
+          }}>Tendangan Ke - {soal}</Text>
+            <TouchableOpacity onPress={() => {
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Splash' }],
+              });
+            }} style={{
+              paddingHorizontal: 10,
+              zIndex: 100
+            }}>
+              <Image source={require('../../assets/home.png')} style={{
+                width: 25,
+                height: 25,
+              }} />
+            </TouchableOpacity>
+          </View>
         </View>
+
 
         <Image source={require('../../assets/gawang.png')} style={{
           width: windowWidth,
           height: windowHeight / 1.5,
         }} />
+
         {/* <Image source={require('../../assets/kiper_kanan.png')} style={{
           width: windowWidth / 1.5,
           height: windowHeight / 1.3,
@@ -435,9 +423,10 @@ export default function Home({ navigation }) {
           flex: 1,
           padding: 0,
         }}>
-          <TouchableNativeFeedback onPress={() => tendanganMulai()}>
+          <TouchableNativeFeedback onPress={() => navigation.navigate('TidakGoalKanan')}>
             <Animated.Image source={require('../../assets/bola.gif')} style={{
               height: bola,
+              zIndex: 100,
               width: '100%',
               resizeMode: 'contain',
               position: 'absolute',
@@ -485,10 +474,9 @@ export default function Home({ navigation }) {
           alignItems: 'center'
           // backgroundColor: 'red'
         }}>
-          <Image source={require('../../assets/kanan.png')} style={{
-            width: windowHeight / 1.8,
-            height: 70,
-            resizeMode: 'contain'
+          <Image source={GambarKanan[pilih]} style={{
+            width: 300,
+            height: 60,
           }} />
           <ImageBackground source={gambar[pilih]} style={{
             width: windowHeight / 1.8,
@@ -510,33 +498,55 @@ export default function Home({ navigation }) {
                   setJumlah(0);
                   if (pilih == 4) {
                     MyCanvas.current.clear();
-                    setPilih(0)
-                    setModalVisible(false);
-                    // tendangKanan();
-                    AUDIO_N.play();
-                    setTimeout(() => {
-                      AUDIO_KANAN.play();
 
-                    }, 1000);
+
+
+
+                    setTimeout(() => {
+                      setPilih(5);
+                      SoundPlayer.playSoundFile('n', 'mp3');
+
+                    }, 100)
+                    setTimeout(() => {
+
+                      SoundPlayer.playSoundFile('kanan', 'mp3')
+                    }, 800)
+
+
+
+
+                    setTimeout(() => {
+
+                      setPilih(0)
+                      setModalVisible(false);
+                    }, 1200);
+
+
 
                     setTimeout(() => {
                       if (soal % 2 != 0) {
 
 
-
                         if (soal == 6 && (nilai + 1) == 6) {
                           setNilai(nilai + 1);
-                          navigation.navigate('Menang');
 
+                          navigation.navigate('TidakGoalKanan', {
+                            status: 'Menang'
+                          });
                         } else if (soal == 6 && (nilai + 1) != 6) {
                           setNilai(nilai + 1);
-                          navigation.navigate('Gagal');
+                          navigation.navigate('TidakGoalKanan', {
+                            status: 'Gagal'
+                          });
+
 
                         } else {
                           if (nilai > 0) {
                             setNilai(nilai - 1);
                           }
-                          navigation.navigate('TidakGoalKanan');
+                          navigation.navigate('TidakGoalKanan', {
+                            status: ''
+                          });
                           setSoal(soal + 1)
                         }
 
@@ -546,16 +556,24 @@ export default function Home({ navigation }) {
 
                         if (soal == 6 && (nilai + 1) == 6) {
                           setNilai(nilai + 1);
-                          navigation.navigate('Menang');
+
+                          navigation.navigate('GoalKanan', {
+                            status: 'Menang'
+                          });
 
                         } else if (soal == 6 && (nilai + 1) != 6) {
                           setNilai(nilai + 1);
-                          navigation.navigate('Gagal');
+
+                          navigation.navigate('GoalKanan', {
+                            status: 'Gagal'
+                          });
 
                         } else {
                           setNilai(nilai + 1);
 
-                          navigation.navigate('GoalKanan');
+                          navigation.navigate('GoalKanan', {
+                            status: ''
+                          });
                           setSoal(soal + 1)
 
                         }
@@ -566,13 +584,17 @@ export default function Home({ navigation }) {
                   } else {
                     MyCanvas.current.clear();
                     if (pilih == 0) {
-                      AUDIO_K.play();
+
+                      SoundPlayer.playSoundFile('k', 'mp3');
+
+
+
                     } else if (pilih == 1) {
-                      AUDIO_A.play();
+                      SoundPlayer.playSoundFile('a', 'mp3');
                     } else if (pilih == 2) {
-                      AUDIO_N.play();
+                      SoundPlayer.playSoundFile('n', 'mp3');
                     } else if (pilih == 3) {
-                      AUDIO_A.play();
+                      SoundPlayer.playSoundFile('a', 'mp3');
                     }
                     setPilih(pilih + 1)
                   }
@@ -609,10 +631,9 @@ export default function Home({ navigation }) {
           alignItems: 'center'
           // backgroundColor: 'red'
         }}>
-          <Image source={require('../../assets/kiri.png')} style={{
-            width: windowHeight / 1.8,
-            height: 70,
-            resizeMode: 'contain'
+          <Image source={GambarKiri[pilih]} style={{
+            width: 300,
+            height: 60,
           }} />
           <ImageBackground source={gambar2[pilih]} style={{
             width: windowHeight / 1.8,
@@ -625,8 +646,7 @@ export default function Home({ navigation }) {
 
               onStrokeEnd={x => {
 
-                // kiri
-                console.log(x);
+
                 if (jumlah == 2 || pilih == 1 || pilih == 3) {
 
 
@@ -634,13 +654,26 @@ export default function Home({ navigation }) {
                   MyCanvas.current.clear();
                   setJumlah(0);
                   if (pilih == 3) {
-                    setPilih(0)
-                    AUDIO_I.play();
-                    setModalVisible2(false);
-                    setTimeout(() => {
-                      AUDIO_KIRI.play();
 
-                    }, 1000);
+
+
+
+                    setTimeout(() => {
+
+                      SoundPlayer.playSoundFile('i', 'mp3');
+                      setPilih(4);
+                    }, 100)
+                    setTimeout(() => {
+
+                      SoundPlayer.playSoundFile('kiri', 'mp3')
+
+
+                    }, 800)
+                    setTimeout(() => {
+
+                      setPilih(0)
+                      setModalVisible2(false);
+                    }, 1200);
 
 
 
@@ -651,15 +684,23 @@ export default function Home({ navigation }) {
 
                         if (soal == 6 && (nilai + 1) == 6) {
                           setNilai(nilai + 1);
-                          navigation.navigate('Menang');
+
+                          navigation.navigate('GoalKiri', {
+                            status: 'Menang'
+                          });
 
                         } else if (soal == 6 && (nilai + 1) != 6) {
                           setNilai(nilai + 1);
-                          navigation.navigate('Gagal');
+
+                          navigation.navigate('GoalKiri', {
+                            status: 'Gagal'
+                          });
 
                         } else {
                           setNilai(nilai + 1);
-                          navigation.navigate('GoalKiri');
+                          navigation.navigate('GoalKiri', {
+                            status: ''
+                          });
                           setSoal(soal + 1);
                         }
 
@@ -669,18 +710,28 @@ export default function Home({ navigation }) {
 
                         if (soal == 6 && (nilai + 1) == 6) {
                           setNilai(nilai + 1);
-                          navigation.navigate('Menang');
+                          navigation.navigate('TidakGoalKiri', {
+                            status: 'Menang'
+                          });
+
+
+
 
                         } else if (soal == 6 && (nilai + 1) != 6) {
                           setNilai(nilai + 1);
-                          navigation.navigate('Gagal');
+                          navigation.navigate('TidakGoalKiri', {
+                            status: 'Gagal'
+                          });
+
 
                         } else {
 
                           if (nilai > 0) {
                             setNilai(nilai - 1);
                           }
-                          navigation.navigate('TidakGoalKiri');
+                          navigation.navigate('TidakGoalKiri', {
+                            status: ''
+                          });
                           setSoal(soal + 1)
 
                         }
@@ -693,11 +744,11 @@ export default function Home({ navigation }) {
                   } else {
 
                     if (pilih == 0) {
-                      AUDIO_K.play();
+                      SoundPlayer.playSoundFile('k', 'mp3');
                     } else if (pilih == 1) {
-                      AUDIO_I.play();
+                      SoundPlayer.playSoundFile('i', 'mp3');
                     } else if (pilih == 2) {
-                      AUDIO_R.play();
+                      SoundPlayer.playSoundFile('r', 'mp3');
                     }
                     setPilih(pilih + 1)
                   }

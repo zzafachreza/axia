@@ -13,6 +13,9 @@ import {
   GoalKanan,
   GoalKiri,
   GagalTidakGoal,
+  Home2,
+  Home3,
+  GetStarted2,
 
 } from '../pages';
 import { colors } from '../utils';
@@ -50,6 +53,22 @@ export default function Router() {
       <Stack.Screen
         name="Home"
         component={Home}
+        options={{
+          headerShown: false,
+        }}
+      />
+
+      <Stack.Screen
+        name="Home2"
+        component={Home2}
+        options={{
+          headerShown: false,
+        }}
+      />
+
+      <Stack.Screen
+        name="Home3"
+        component={Home3}
         options={{
           headerShown: false,
         }}
@@ -108,6 +127,14 @@ export default function Router() {
       <Stack.Screen
         name="GagalTidakGoal"
         component={GagalTidakGoal}
+        options={{
+          headerShown: false,
+        }}
+      />
+
+      <Stack.Screen
+        name="GetStarted2"
+        component={GetStarted2}
         options={{
           headerShown: false,
         }}

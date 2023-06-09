@@ -3,20 +3,30 @@ import React, { useEffect } from 'react'
 import Sound from 'react-native-sound';
 
 export default function GagalTidakGoal({ navigation }) {
-    const rebut = new Sound(
-        require('../../assets/rebut.mpeg'),
-        Sound.MAIN_BUNDLE,
-    ).release();
+
 
     useEffect(() => {
-        setTimeout(() => {
-            // navigation.goBack();
-            rebut.play();
-        }, 100)
-        setTimeout(() => {
-            navigation.goBack();
-            // alert('oke')
-        }, 7200)
+        const tidakgoal = new Sound('rebut.mpeg', Sound.MAIN_BUNDLE, (error) => {
+            if (error) {
+                console.log('error', error);
+                return;
+            }
+            tidakgoal.play(success => {
+                navigation.goBack();
+                const kemana = new Sound('kemana.mp3', Sound.MAIN_BUNDLE, (error) => {
+
+                    kemana.play(kk => {
+                        if (kk) {
+                            console.log('kea arah mana', kk);
+                            kemana.reset();
+                        } else {
+                            console.log('playback failed due to audio decoding errors');
+                        }
+                    })
+                })
+            });
+        });
+
     }, [])
 
     return (

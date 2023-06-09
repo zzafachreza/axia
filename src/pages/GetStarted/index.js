@@ -7,6 +7,7 @@ import {
     Image,
     Animated,
     ImageBackground,
+    TouchableNativeFeedback,
 } from 'react-native';
 import { MyButton } from '../../components';
 import { colors, fonts, windowHeight, windowWidth } from '../../utils';
@@ -14,77 +15,59 @@ import { getData } from '../../utils/localStorage';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Sound from 'react-native-sound';
 
-var Mysplash = new Sound(
-    require('../../assets/otw.mpeg'),
-    Sound.MAIN_BUNDLE,
-).release();
+
 
 export default function GetStarted({ navigation }) {
 
 
-    const textLogo = new Animated.Value(0);
+
+    const sound = new Sound('run.mp3', Sound.MAIN_BUNDLE, (error) => {
+        if (error) {
+            console.log('error', error);
+            return;
+        }
+        sound.play(success => {
+            if (success) {
+                sound.stop();
+                navigation.replace('GetStarted2');
 
 
-    const animasi = (x, from, to, durasi) => {
-        Animated.loop(
-            Animated.sequence([
-                Animated.timing(x, {
-                    toValue: from,
-                    duration: durasi,
-                    useNativeDriver: true
-                }),
-                Animated.timing(x, {
-                    toValue: to,
-                    duration: durasi,
-                    useNativeDriver: true
-                }),
-            ]),
-            {
-                iterations: 1,
-            },
-        ).start();
-    };
+            } else {
+                console.log('playback failed due to audio decoding errors');
+            }
+        });
 
 
-
-    useEffect(() => {
-
-
-        setTimeout(() => {
-            setBackgroundKU(require('../../assets/introtext2.png'));
-            Mysplash.play();
-
-        }, 2000);
-
-        setTimeout(() => {
-
-            navigation.replace('Login');
-        }, 6000)
-
-
-    }, []);
-
-    const [backgroundKU, setBackgroundKU] = useState(require('../../assets/introtext1.png'))
+    });
 
 
     const myimg = useRef();
 
     return (
-        <ImageBackground
-            ref={myimg}
-            source={require('../../assets/intro1.jpg')}
-            style={{
-                flex: 1,
-                padding: 10,
-            }}>
+        <TouchableNativeFeedback onPress={() => {
+            sound.stop();
+            navigation.replace('GetStarted2');
 
-            <Image source={backgroundKU} style={{
-                width: windowWidth / 2,
-                height: 60,
-                resizeMode: 'contain'
-            }} />
 
-        </ImageBackground>
+        }} style={{
+            flex: 1,
+        }}>
+            <ImageBackground
+                ref={myimg}
+                source={require('../../assets/intro1.jpg')}
+                style={{
+                    flex: 1,
+                    padding: 10,
+                }}>
+
+                <Image source={require('../../assets/introtext1.png')} style={{
+                    width: windowWidth / 2,
+                    height: 60,
+                    resizeMode: 'contain'
+                }} />
+
+            </ImageBackground>
+        </TouchableNativeFeedback>
     );
 }
 

@@ -17,14 +17,11 @@ import { getData } from '../../utils/localStorage';
 import { SketchCanvas } from '@terrylinla/react-native-sketch-canvas';
 import Sound from 'react-native-sound';
 
-var whoosh = new Sound(
-    require('../../assets/goal.mp3'),
-    Sound.MAIN_BUNDLE,
-).release();
+import SoundPlayer from 'react-native-sound-player'
 
 
 
-export default function GoalKanan({ navigation }) {
+export default function GoalKanan({ navigation, route }) {
 
 
 
@@ -33,6 +30,13 @@ export default function GoalKanan({ navigation }) {
     const bola = new Animated.Value(100);
     const kanan = new Animated.Value(0);
     const atas = new Animated.Value(0);
+
+    const bola2 = new Animated.Value(100);
+    const kanan2 = new Animated.Value(0);
+    const atas2 = new Animated.Value(0);
+    const trans = new Animated.Value(0);
+
+
     const kiper_loncat1 = new Animated.Value(0);
     const kiper_loncat2 = new Animated.Value(0);
     const kiper_loncat3 = new Animated.Value(0);
@@ -98,6 +102,23 @@ export default function GoalKanan({ navigation }) {
             duration: 800,
             useNativeDriver: false
         }).start();
+        Animated.timing(bola2, {
+            toValue: 50,
+            duration: 1200,
+        }).start();
+        Animated.timing(kanan2, {
+            toValue: -300,
+            duration: 700,
+        }).start();
+        Animated.timing(atas2, {
+            toValue: -280,
+            duration: 1000,
+        }).start();
+        Animated.timing(trans, {
+            toValue: 0.8,
+            duration: 2000,
+        }).start();
+
     }
 
     const tendanganKiri = () => {
@@ -151,18 +172,28 @@ export default function GoalKanan({ navigation }) {
     const [pilih, setPilih] = useState(0);
 
 
-
+    tendangKanan();
     useEffect(() => {
 
-        tendangKanan();
 
         setTimeout(() => {
-            whoosh.play();
+
+            SoundPlayer.playSoundFile('goal', 'mp3');
         }, 100)
-
         setTimeout(() => {
-            navigation.goBack();
-        }, 1200)
+            if (route.params.status == 'Menang') {
+                navigation.replace('Menang')
+            } else if (route.params.status == 'Gagal') {
+                navigation.replace('Gagal')
+            } else {
+                navigation.goBack();
+            }
+
+
+            SoundPlayer.playSoundFile('kemana', 'mp3');
+        }, 3000)
+
+
 
 
 
@@ -174,6 +205,7 @@ export default function GoalKanan({ navigation }) {
     const myimg = useRef();
 
     return (
+
         <ImageBackground
 
             source={require('../../assets/bghome.png')}
@@ -273,6 +305,18 @@ export default function GoalKanan({ navigation }) {
                             ]
                         }} />
                     </TouchableNativeFeedback>
+
+                    <Animated.Image source={require('../../assets/bintang.png')} style={{
+                        height: bola2,
+                        width: '100%',
+                        opacity: trans,
+                        resizeMode: 'contain',
+                        position: 'absolute',
+                        transform: [
+                            { translateX: kanan2 },
+                            { translateY: atas2 },
+                        ]
+                    }} />
                 </View>
 
 

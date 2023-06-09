@@ -15,14 +15,10 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import Sound from 'react-native-sound';
 
-var Mysplash = new Sound(
-  require('../../assets/utama.mp3'),
-  Sound.MAIN_BUNDLE,
-).release();
+import SoundPlayer from 'react-native-sound-player'
 
 
 export default function Splash({ navigation }) {
-
 
 
 
@@ -54,10 +50,17 @@ export default function Splash({ navigation }) {
 
   useEffect(() => {
 
-    setTimeout(() => {
-      Mysplash.play();
-    }, 1000);
 
+    setTimeout(() => {
+
+
+      // try {
+      //   SoundPlayer.playUrl('https://zavalabs.com/axia/raw/utama.mp3');
+      // } catch (e) {
+      //   console.log(`cannot play the sound file`, e)
+      // }
+
+    }, 100)
 
     animasi(awanKanan, 0, 50);
     animasi(awanKiri, 50, 0);

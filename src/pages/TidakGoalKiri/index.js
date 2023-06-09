@@ -16,12 +16,8 @@ import { colors, fonts, windowHeight, windowWidth } from '../../utils';
 import { getData } from '../../utils/localStorage';
 import { SketchCanvas } from '@terrylinla/react-native-sketch-canvas';
 import Sound from 'react-native-sound';
-
-var whoosh = new Sound(
-    require('../../assets/tidakgoal.mp3'),
-    Sound.MAIN_BUNDLE,
-).release();
-export default function TidakGoalKiri({ navigation }) {
+import SoundPlayer from 'react-native-sound-player'
+export default function TidakGoalKiri({ navigation, route }) {
 
 
     const tanda = new Animated.Value(0);
@@ -136,15 +132,25 @@ export default function TidakGoalKiri({ navigation }) {
     }
 
 
-
+    tendanganKiri();
     useEffect(() => {
 
-        tendanganKiri();
-        whoosh.play();
-        setTimeout(() => {
-            navigation.replace('GagalTidakGoal')
-        }, 1200)
 
+        setTimeout(() => {
+            SoundPlayer.playSoundFile('tidakgoal', 'mp3');
+        }, 200)
+
+        setTimeout(() => {
+
+            if (route.params.status == 'Menang') {
+                navigation.replace('Menang')
+            } else if (route.params.status == 'Gagal') {
+                navigation.replace('Gagal')
+            } else {
+                navigation.replace('GagalTidakGoal');
+            }
+
+        }, 2500)
 
 
     }, []);
